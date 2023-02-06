@@ -4,32 +4,32 @@ const { configuration, openai } = config;
 
 router.post("/", async (req, res) => {
     if (!configuration.apiKey) {
-        res.status(500).json({
-        error: { message: "OpenAI API key not configured, please follow instructions in README.md" }
+            res.status(500).json({
+            error: { message: "OpenAI API key not configured, please follow instructions in README.md" }
         });
         return;
     }
 
-    const text = req.body.text || '';
+    const { recipe = '', minutes = null, ingredients = [] } = req.body;
+    const prompt = `Write me a recipe for ${recipe} that takes ${minutes} minutes to prepare` + `that includes the following incredients: ${ingredients}.`
 
-    if (text.length === 0) {
+    if (recipe?.length === 0) {
         res.status(400).json({
-        error: {
-            message: "Please enter a valid prompt",
-        }
+            error: {
+                message: 'Please enter valid prompt'
+            }
         });
-        return;
     }
 
     try {
         const completion = await openai.createCompletion({
             model: "text-davinci-003",
             max_tokens: 1000,
-            prompt: `Translate the following English phrase into modern Afghan Dari. You can only respond using letters from the English alphabet: ${text}`,
+            prompt,
             temperature: 0.1,
         });
         res.status(200).json({
-            result: completion.data.choices[0].text?.replace(/\n/g, '')
+            result: completion?.data?.choices[0]?.text
         });
     } catch(error) {
         if (error.response) {
