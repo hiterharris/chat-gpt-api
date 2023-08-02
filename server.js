@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const server = express();
 
 const BedtimeRouter = require("./routes/bedtime-story.js");
-const EnglishDariRouter = require("./routes/english-dari.js");
+const DariRouter = require("./routes/translate/dari.js");
 const TranslateRouter = require("./routes/translate.js");
 const RecipesRouter = require("./routes/recipes.js");
 
@@ -19,7 +19,7 @@ server.get("/", (req, res) => {
 });
 
 server.use("/api/bedtime-story", BedtimeRouter);
-server.use("/api/english-dari", EnglishDariRouter);
+server.use("/api/translate/dari", DariRouter);
 server.use("/api/translate", TranslateRouter);
 server.use("/api/recipes", RecipesRouter);
 

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const config = require("../config");
+const config = require("../../config");
 const { configuration, openai } = config;
 
 router.post("/", async (req, res) => {
@@ -21,11 +21,13 @@ router.post("/", async (req, res) => {
         return;
     }
 
+    const prompt = `Translate ${text} to Afghan Dari using only the Latin alphabet.`;
+
     try {
         const completion = await openai.createCompletion({
             model: "text-davinci-003",
             max_tokens: 1000,
-            prompt: `Translate the following English phrase into modern Afghan Dari. You can only respond using letters from the English alphabet: ${text}`,
+            prompt,
             temperature: 0.1,
         });
         res.status(200).json({
@@ -45,5 +47,7 @@ router.post("/", async (req, res) => {
         }
     }
 });
+
+
 
 module.exports = router;
