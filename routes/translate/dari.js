@@ -3,36 +3,28 @@ const config = require("../../config");
 const { configuration, openai } = config;
 
 router.post("/", async (req, res) => {
+    const text = req.body.text || '';
+    const messages = [
+        { role: "system", content: 'You will be provided with a sentence in English, and your task is to translate it to Afghan Dari using only the Latin alphabet.' },
+        { role: "user", content: text },
+    ];
+
     if (!configuration.apiKey) {
         res.status(500).json({
-        error: { message: "OpenAI API key not configured, please follow instructions in README.md" }
+            error: { message: "OpenAI API key not configured, please follow instructions in README.md" }
         });
         return;
     }
-
-    const text = req.body.text || '';
-
-    if (text.length === 0) {
-        res.status(400).json({
-        error: {
-            message: "Please enter a valid prompt",
-        }
-        });
-        return;
-    }
-
-    const prompt = `Translate ${text} to Afghan Dari using only the Latin alphabet.`;
 
     try {
-        const completion = await openai.createCompletion({
-            model: "text-davinci-003",
-            max_tokens: 1000,
-            prompt,
-            temperature: 0.1,
+        const response = await openai.createChatCompletion({
+            model: "gpt-4",
+            messages,
+            temperature: 0,
+            max_tokens: 256,
         });
-        res.status(200).json({
-            result: completion.data.choices[0].text?.replace(/\n/g, '')
-        });
+        const result = response?.data?.choices[0]?.message?.content;
+        res.status(200).json({ result });
     } catch(error) {
         if (error.response) {
             console.error(error.response.status, error.response.data);
@@ -47,7 +39,5 @@ router.post("/", async (req, res) => {
         }
     }
 });
-
-
 
 module.exports = router;
