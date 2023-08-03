@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const config = require("../config");
 const { configuration, openai } = config;
+const https = require('https');
 
 router.post('/', async (req, res) => {
     if (!configuration.apiKey) {
