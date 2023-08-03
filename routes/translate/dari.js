@@ -4,9 +4,16 @@ const { configuration, openai } = config;
 
 router.post("/", async (req, res) => {
     const text = req.body.text || '';
-    const messages = [
+    const inputLanguage = req.body.language || 'English';
+    
+    const messagesEnglish = [
         { role: "system", content: 'You will be provided with a sentence in English, and your task is to translate it to Afghan Dari using only the Latin alphabet.' },
         { role: "user", content: text },
+    ];
+
+    const messagesDari = [
+        { role: "system", content: 'You will be provided with a sentence in Dari, and your task is to translate it to English using only the Latin alphabet.' },
+        { role: "user", content: { text } },
     ];
 
     if (!configuration.apiKey) {
@@ -19,7 +26,7 @@ router.post("/", async (req, res) => {
     try {
         const response = await openai.createChatCompletion({
             model: "gpt-4",
-            messages,
+            messages: inputLanguage === 'English' ? messagesEnglish : messagesDari,
             temperature: 0,
             max_tokens: 256,
         });
