@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
             max_tokens: 256,
         });
         const result = response?.data?.choices[0]?.message?.content;
-        res.status(200).json({ result });
+        res.status(200).json(result);
     } catch(error) {
         if (error.response) {
             console.error(error.response.status, error.response.data);
